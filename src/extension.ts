@@ -2,7 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { posix } from 'path';
-import { CardConvert } from './types';	
+import { CardConvert } from './types';
 import { CabinetCardIdentifier } from './cci';
 
 // this method is called when your extension is activated
@@ -17,9 +17,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	const cards = CardConvert.toCards(readData);
 
-	const ccis = cards.map(c => CabinetCardIdentifier.fromCard(c).toJsonString());
+	// const ccis = cards.map(c => CabinetCardIdentifier.fromCard(c).toJsonString());
 
-	console.log(ccis);
+	// console.log(ccis);
 
 	// var regexHex = /^0x[0-9a-fA-F]+$/g;
 	// var regexHexc = /^[0-9a-fA-F]+[h]$/g;
@@ -34,17 +34,29 @@ export async function activate(context: vscode.ExtensionContext) {
 
 			const captured = hoveredWord.match(testPattern);
 			console.log(captured)
+
 			if (captured === null || captured.length < 2) {
 				return;
 			}
-			var markdownString = new vscode.MarkdownString();
 
-			markdownString.appendCodeblock(captured[1], 'javascript');
+			const cci = new CabinetCardIdentifier().fromJsonString(captured[1]);
+
+			if (cci) {
 
 
-			return {
-				contents: [markdownString]
-			};
+				const card = cci.getCard(cards);
+				if (card) {
+					var markdownString = new vscode.MarkdownString();
+
+					markdownString.appendCodeblock(JSON.stringify(card), 'javascript');
+
+
+					return {
+						contents: [markdownString]
+					};
+
+				}
+			}
 			// if (testPattern.test(hoveredWord.toString())) {
 
 			// 	console.log(hoveredWord);
