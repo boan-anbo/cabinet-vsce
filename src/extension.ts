@@ -4,7 +4,9 @@ import * as vscode from 'vscode';
 import { posix } from 'path';
 import { CardConvert } from './types';
 import { CabinetCardIdentifier } from './cci';
-
+import { CabinetNotesProvider } from './cabinetnotes-provider';
+import StateCore = require('markdown-it/lib/rules_core/state_core');
+import type MarkdownIt from "markdown-it/lib"
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
@@ -17,14 +19,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	const cards = CardConvert.toCards(readData);
 
-	// const ccis = cards.map(c => CabinetCardIdentifier.fromCard(c).toJsonString());
-
-	// console.log(ccis);
-
-	// var regexHex = /^0x[0-9a-fA-F]+$/g;
-	// var regexHexc = /^[0-9a-fA-F]+[h]$/g;
-	// var regexDec = /^-?[0-9]+$/g;
-	// var regexBin = /^0b[01]+$/g;
 	const testPattern = /{(.+)}/;
 	let hover = vscode.languages.registerHoverProvider({ scheme: '*', language: '*' }, {
 		provideHover(document, position, token) {
@@ -42,8 +36,6 @@ export async function activate(context: vscode.ExtensionContext) {
 			const cci = new CabinetCardIdentifier().fromJsonString(captured[1]);
 
 			if (cci) {
-
-
 				const card = cci.getCard(cards);
 				if (card) {
 					var markdownString = new vscode.MarkdownString();
@@ -58,53 +50,43 @@ export async function activate(context: vscode.ExtensionContext) {
 
 				}
 			}
-			// if (testPattern.test(hoveredWord.toString())) {
-
-			// 	console.log(hoveredWord);
-			// 	// var input: Number = Number(parseInt(hoveredWord.substring(2), 2).toString());
-			// 	markdownString.appendCodeblock(hoveredWord, 'javascript');
-
-			// 	return {
-			// 		contents: [markdownString]
-			// 	};
-			// }
-
-
-
-			// else if (regexHex.test(hoveredWord.toString()) || regexHexc.test(hoveredWord.toString())) {
-
-			// 	markdownString.appendCodeblock(`Dec:\n${parseInt(hoveredWord, 16)}\nBinary:\n${parseInt(hoveredWord, 16).toString(2)}`, 'javascript');
-
-			// 	return {
-			// 		contents: [markdownString]
-			// 	};
-			// }
-			// else if (regexDec.test(hoveredWord.toString())) {
-
-			// 	var input: Number = Number(hoveredWord.toString());
-			// 	markdownString.appendCodeblock(`Hex:\n0x${input.toString(16).toUpperCase()}\nBinary:\n${input.toString(2).replace(/(^\s+|\s+$)/, '')} `, 'javascript');
-
-			// 	return {
-			// 		contents: [markdownString]
-			// 	};
-
-			// }
 		}
 	});
 
 	context.subscriptions.push(hover);
 
-	// // The command has been defined in the package.json file
-	// // Now provide the implementation of the command with registerCommand
-	// // The commandId parameter must match the command field in package.json
-	// let disposable = vscode.commands.registerCommand('cabinet-vsce.helloWorld', () => {
-	// 	// The code you place here will be executed every time your command is executed
-	// 	// Display a message box to the user
-	// 	vscode.window.showInformationMessage('Hello World from cabinet-vsce!');
-	// });
+	// vscode.window.registerTreeDataProvider(
+	// 	'cabinetCards',
+	// 	new CabinetNotesProvider()
+	//   );
 
-	// context.subscriptions.push(disposable);
+	return {
+		extendMarkdownIt(md: any) {
+		  return md.use(example_plugin);
+		}
+	  };
+
 }
+
+
+/**
+ * An example plugin that adds a color to paragraphs
+ */
+ export default function example_plugin(md: MarkdownIt): void {
+	md.core.ruler.push("example", exampleRule)
+  }
+  
+  function exampleRule(state: StateCore): boolean {
+	for (const token of state.tokens) {
+	  if (token.type === "paragraph_open") {
+		token.attrJoin("style", "color:red;")
+	  }
+	}
+	state.tokens[1].content = "fuck you";
+	
+	return true
+  }
+
 
 // this method is called when your extension is deactivated
 export function deactivate() { }
