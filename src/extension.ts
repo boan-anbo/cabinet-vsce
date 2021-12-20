@@ -48,8 +48,9 @@ export async function activate(context: vscode.ExtensionContext) {
 				if (card) {
 					var markdownString = new vscode.MarkdownString();
 
-					markdownString.appendCodeblock(JSON.stringify(card), 'javascript');
-
+					console.log(card.toMarkdown());
+					// markdownString.appendCodeblock(card.toMarkdown(), 'markdown');
+					markdownString.appendMarkdown(card.toMarkdown());
 
 					return {
 						contents: [markdownString]
