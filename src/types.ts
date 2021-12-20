@@ -17,11 +17,9 @@ export class Card {
     source: Source | null;
 
     toMarkdown(): string {
-        return `
-        Title: ${this.title ?? ""}\n
-        Text: ${this.text}\n
+        return `${this.title ?? ""}\n
+        **${this.text}**\n
         UniqueId: ${this.source?.uniqueId ?? ""}\n
-        
         `;
     }
 
@@ -64,7 +62,11 @@ export interface Tag {
 // Converts JSON strings to/from your types
 export class CardConvert {
     public static toCards(json: string): Card[] {
-        return JSON.parse(json);
+        const cardPlains =  JSON.parse(json);
+        return cardPlains.map(cardPlain => {
+            const card = new Card();
+            return Object.assign(card, cardPlain);
+        });
     }
 
     public static cardToJson(value: Card[]): string {
