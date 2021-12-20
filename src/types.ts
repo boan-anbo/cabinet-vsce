@@ -4,38 +4,48 @@
 //
 //   const card = Convert.toCard(json);
 
-export interface Card {
-    id:         string;
-    extra:      string;
-    modified:   Date;
-    created:    Date;
-    text:       string;
-    title:      null;
+export class Card {
+    id: string;
+    extra: string;
+    modified: Date;
+    created: Date;
+    text: string;
+    title: null;
     importance: number;
-    tags:       Tag[];
-    comments:   Comment[];
-    source:     Source | null;
+    tags: Tag[];
+    comments: Comment[];
+    source: Source | null;
+
+    toMarkdown(): string {
+        return `
+        Title: ${this.title ?? ""}\n
+        Text: ${this.text}\n
+        UniqueId: ${this.source?.uniqueId ?? ""}\n
+        
+        `;
+    }
+
 }
 
 export interface Comment {
-    id:    string;
+    id: string;
     extra: string;
-    text:  string;
+    text: string;
     cards: string[];
 }
 
 export interface Source {
-    id:           string;
-    extra:        string;
-    title:        string;
-    text:         string;
-    pageIndex:    number;
-    uniqueId:     null | string;
+    id: string;
+    extra: string;
+    title: string;
+    text: string;
+    pageIndex: number;
+    uniqueId: null | string;
     uniqueIdNote: UniqueIDNote | null;
-    filePath:     null | string;
-    modified:     Date;
-    created:      Date;
-    cards:        string[];
+    filePath: null | string;
+    modified: Date;
+    created: Date;
+    cards: string[];
 }
 
 export enum UniqueIDNote {
@@ -43,11 +53,11 @@ export enum UniqueIDNote {
 }
 
 export interface Tag {
-    id:    string;
+    id: string;
     extra: string;
-    key:   string;
+    key: string;
     value: null | string;
-    note:  null | string;
+    note: null | string;
     cards: string[];
 }
 
