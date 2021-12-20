@@ -1,5 +1,5 @@
 {
-  "name": "cabinet-vsce",
+	"name": "cabinet-vsce",
 	"displayName": "cabinet-vsce",
 	"description": "VS Code extension for Cabinet",
 	"version": "0.0.1",
@@ -10,7 +10,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onStartupFinished" 
+		"onStartupFinished"
 	],
 	"main": "./out/extension.js",
 	"contributes": {

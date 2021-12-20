@@ -1,10 +1,25 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { posix } from 'path';
+import { CardConvert } from './types';	
+import { CabinetCardIdentifier } from './cci';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
+
+	const folderUri = vscode.workspace.workspaceFolders[0].uri;
+
+	const fileUri = folderUri.with({ path: posix.join(folderUri.path, 'test.json') });
+
+	const readData = await (await vscode.workspace.fs.readFile(fileUri)).toString();
+
+	const cards = CardConvert.toCards(readData);
+
+	const ccis = cards.map(c => CabinetCardIdentifier.fromCard(c).toJsonString());
+
+	console.log(ccis);
 
 	// var regexHex = /^0x[0-9a-fA-F]+$/g;
 	// var regexHexc = /^[0-9a-fA-F]+[h]$/g;
@@ -14,7 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
 	let hover = vscode.languages.registerHoverProvider({ scheme: '*', language: '*' }, {
 		provideHover(document, position, token) {
 			const hoveredWord = document.getText(document.getWordRangeAtPosition(position, /{{.+}}/));
-			
+
 			console.log(hoveredWord);
 
 			const captured = hoveredWord.match(testPattern);
