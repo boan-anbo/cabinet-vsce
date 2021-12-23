@@ -9,6 +9,8 @@ import type MarkdownIt from "markdown-it/lib"
 import { cardsCompletionProvider } from './cabinet-core/cards-completion-provider';
 
 import { cardLookupProvider } from './cabinet-core/card-lookup';
+import { showInsertCardsMd } from './cabinet-core/dialogs/show-insert-cards-md';
+import { searchCardsCommand } from './cabinet-core/commands/search-cards-command';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -32,7 +34,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	console.log('Inited')
 
+	context.subscriptions.push(searchCardsCommand(cabinetNodeInstance));
+
 	context.subscriptions.push(cardLookupProvider(cabinetNodeInstance));
+
 
 	// vscode.window.registerTreeDataProvider(
 	// 	'cabinetCards',

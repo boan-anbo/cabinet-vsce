@@ -14,6 +14,13 @@
 	],
 	"main": "./out/extension.js",
 	"contributes": {
+		"commands": [
+			{
+				"command": "cabinet-node.searchCards",
+				"title": "Search Cabinet Cards",
+				"category": "Cabinet"
+			}
+		],
 		"views": {
 			"explorer": [
 				{
