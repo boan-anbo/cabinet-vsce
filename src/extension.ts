@@ -3,14 +3,13 @@
 
 import { CabinetNode } from 'cabinet-node';
 import * as vscode from 'vscode';
-import { CabinetCardIdentifier } from './cci';
-import StateCore = require('markdown-it/lib/rules_core/state_core');
-import type MarkdownIt from "markdown-it/lib"
 import { cardsCompletionProvider } from './cabinet-core/cards-completion-provider';
 
 import { cardLookupProvider } from './cabinet-core/card-lookup';
-import { showInsertCardsMd } from './cabinet-core/dialogs/show-insert-cards-md';
 import { searchCardsCommand } from './cabinet-core/commands/search-cards-command';
+import { cabinetPreviewPanel, showPreview, showPreviewCommand } from './cabinet-core/webviews/preview-panel';
+import { CabinetNodeApi } from './api/cabinet-node-api';
+import { markdownChangePreviewListener } from './cabinet-core/liseners/mardown-change-preview-listener';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -19,18 +18,31 @@ let cabinetNodeInstance: CabinetNode;
 
 async function loadCabinetNode() {
 
-	const folderUri = vscode.workspace.workspaceFolders[0].uri;
+	const workspaces = vscode.workspace.workspaceFolders;
+	if (!workspaces) {
+		vscode.window.showErrorMessage('No workspace folder is opened.');
+		return;
+	}
+	const folderUri = workspaces[0].uri;
 
 	cabinetNodeInstance = new CabinetNode(folderUri.fsPath, 'test.json');
+
+	return cabinetNodeInstance;
 }
 
+let cabinetNodeApi: CabinetNodeApi;
+
+async function initCabinetNodeApi(cabinetNode: CabinetNode) {
+
+	cabinetNodeApi = new CabinetNodeApi(cabinetNode);
+}
 
 
 export async function activate(context: vscode.ExtensionContext) {
 
-
-
 	loadCabinetNode();
+
+	initCabinetNodeApi(cabinetNodeInstance);
 
 	console.log('Inited')
 
@@ -38,6 +50,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(cardLookupProvider(cabinetNodeInstance));
 
+	context.subscriptions.push(showPreviewCommand(cabinetNodeInstance));
+
+	vscode.workspace.onDidChangeTextDocument(markdownChangePreviewListener);
 
 	// vscode.window.registerTreeDataProvider(
 	// 	'cabinetCards',
@@ -46,33 +61,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(cardsCompletionProvider(cabinetNodeInstance));
 
-	// return {
-	// 	extendMarkdownIt(md: any) {
-	// 		return md.use(example_plugin);
-	// 	}
-	// };
 
 }
-
-
-// /**
-//  * An example plugin that adds a color to paragraphs
-//  */
-// export default function example_plugin(md: MarkdownIt): void {
-// 	md.core.ruler.push("example", exampleRule)
-// }
-
-// function exampleRule(state: StateCore): boolean {
-// 	for (const token of state.tokens) {
-// 		if (token.type === "paragraph_open") {
-// 			token.attrJoin("style", "color:red;")
-// 		}
-// 	}
-// 	state.tokens[1].content = "fuck you";
-
-// 	return true
-// }
-
 
 // this method is called when your extension is deactivated
 export function deactivate() { }

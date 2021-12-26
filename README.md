@@ -1,6 +1,9 @@
+New Read Me.
+
 # cabinet-vsce README
 
-This is the README for your extension "cabinet-vsce". After writing up a brief description, we recommend including the following sections.
+<!-- Why??
+
 
 ## Features
 
@@ -65,6 +68,6 @@ Ensure that you've read through the extensions guidelines and follow the best pr
 ### For more information
 
 * [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/) -->
 
-**Enjoy!**
+<!-- **Enjoy!** -->
