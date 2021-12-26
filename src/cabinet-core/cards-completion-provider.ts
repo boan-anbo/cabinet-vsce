@@ -97,7 +97,6 @@ export const cardsCompletionProvider = (cabinet: CabinetNode) => {
 			// commandCompletion.command = { command: 'editor.action.triggerSuggest', title: 'Re-trigger completions...' };
 
 			// return all completion items as array
-			return results;
 		}
 	}, "{");
 };
